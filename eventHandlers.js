@@ -15,6 +15,35 @@ const animationMap = {
     }
 }
 
+const terrainConfig = {
+    "terrain": {
+        "label": "Required: Terrain",
+        "options": {
+            "resolution": {
+                "type": "number", "default":100, "label": "Grid size"
+            },
+            "slices": {
+                "type":"number",
+                "default":100,
+                "label":"Fractures"
+            },
+            "smooth": {
+                "type":"checkbox",
+                "default":true,
+                "label":"Smooth shading"
+            },
+            "erode": {
+                "type":"radio",
+                "options": {
+                    "rough":"No Weathering",
+                    "spheroid":"Spheroidal Weathering",
+                    "drain":"Hydraulic drainage"
+                }
+            }
+        }
+    }
+}
+
 /**
  * onChange handler for the radio buttons. Look up from the radio button's value in the map above to get the name
  * of the files for the draw program, the shader files (vertex and fragment) and the name of the initialize/setup function
@@ -53,8 +82,14 @@ function setupEventHandlers() {
     document.getElementById("radio-form").addEventListener('change', (event) => {
         event.preventDefault()
         // const value = document.getElementById("radio-form")
-        console.log("what is value??: ", event.target.value)
+        console.log("what is value??: ", event)
         changeAnimation(event.target.value)
+    })
+
+    window.gridSize = 2
+    document.getElementById("grid-size-input").addEventListener("change", (event) => {
+        event.preventDefault()
+        window.gridSize = event.target.value
     })
 }
 
