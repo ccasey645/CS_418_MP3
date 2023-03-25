@@ -40,7 +40,9 @@ function timeStep(milliseconds) {
     // gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
 
     draw()
-    requestAnimationFrame(timeStep)
+    if (window.currentAnimation === animationMap.geometry.currentAnimation) {
+        requestAnimationFrame(timeStep)
+    }
 }
 
 function addNormals(data) {
@@ -89,7 +91,6 @@ async function setupGeometryView(event) {
     setupCanvas().then(() => {
         fillScreen()
         requestAnimationFrame(timeStep)
-
     })
 }
 

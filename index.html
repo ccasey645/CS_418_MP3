@@ -5,6 +5,7 @@
         <script src="scene-option-tree.js"></script><!-- handles controls -->
         <script src="constants.js"></script>
         <script src="shaders/geometry/draw.js"></script>
+        <script src="shaders/faulting/draw.js"></script>
         <script src="matrixMath.js"></script>
         <script src="normals.js"></script>
         <script src="setup.js"></script>
@@ -27,8 +28,9 @@
             <form id="radio-form">
                 <div id="set1">
                     <label>
-                        <input type="radio" name="controlOptions" value="geometry"> Required: Faulting-method terrain
+                        Required: Faulting-method terrain
                     </label>
+                    <input type="radio" name="controlOptions" value="geometry"/>
                 </div>
                 <hr>
                 <div id="set2">

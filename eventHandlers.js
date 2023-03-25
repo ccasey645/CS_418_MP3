@@ -12,6 +12,13 @@ const animationMap = {
         fragmentShader: `${directory}/geometry/fragment.glsl`,
         dataSource: `${directory}/geometry/geometry.json`,
         setup: setupGeometryView,
+    },
+    terrain: {
+        currentAnimation: "t",
+        vertexShader: `${directory}/faulting/vertex.glsl`,
+        fragmentShader: `${directory}/faulting/fragment.glsl`,
+        dataSource: `${directory}/faulting/geometry.json`,
+        setup: setupFaultingView,
     }
 }
 
@@ -78,7 +85,7 @@ async function setupCanvas() {
  * mouse. Add the callbacks to be called when these events happen.
  */
 function setupEventHandlers() {
-    changeAnimation("geometry")
+    changeAnimation("terrain")
     document.getElementById("radio-form").addEventListener('change', (event) => {
         event.preventDefault()
         // const value = document.getElementById("radio-form")
@@ -86,8 +93,8 @@ function setupEventHandlers() {
         changeAnimation(event.target.value)
     })
 
-    window.gridSize = 2
-    document.getElementById("grid-size-input").addEventListener("change", (event) => {
+    window.gridSize = 50
+    document.getElementById("slices").addEventListener("change", (event) => {
         event.preventDefault()
         window.gridSize = event.target.value
     })
