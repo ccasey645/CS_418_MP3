@@ -18,7 +18,7 @@ const animationMap = {
         vertexShader: `${directory}/faulting/vertex.glsl`,
         fragmentShader: `${directory}/faulting/fragment.glsl`,
         dataSource: `${directory}/faulting/geometry.json`,
-        setup: setupFaultingView,
+        setup: setupScene,
     }
 }
 

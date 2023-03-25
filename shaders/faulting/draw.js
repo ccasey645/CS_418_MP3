@@ -8,17 +8,11 @@ function draw() {
     gl.useProgram(window.program)
 
     gl.bindVertexArray(window.geom.vao)
-    let lightdir = normalize([1, 50, 2])
-    let halfway = normalize(add(lightdir, [1, 0, 1]))
+    let lightdir = normalize([0, 100, 0])
+    let halfway = normalize(add(lightdir, [0, 0, 3]))
     gl.uniform3fv(gl.getUniformLocation(window.program,'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir'), lightdir)
-    gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 0])
-
-    lightdir = normalize([-2, -50, 1])
-    halfway = normalize(add(lightdir, [0, 0, 1]))
-    gl.uniform3fv(gl.getUniformLocation(window.program,'halfway2'), halfway)
-    gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir2'), lightdir)
-    gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor2'), [0.5, -6, 1])
+    gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 1])
 
     gl.uniform4fv(gl.getUniformLocation(window.program, 'color'), illiOrange)
     gl.uniformMatrix4fv(gl.getUniformLocation(window.program, 'p'), false, p)
@@ -34,10 +28,11 @@ function faultingTimeStep(milliseconds) {
     // window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
     window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
     window.v = m4view(
-        [5, 0, 30],
+        [0, 0, 3],
         [0, 0, 0],
         [0, 1, 0]
     )
+    // console.log("what if view??", window.v)
     gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
 
 
@@ -54,25 +49,20 @@ function createInitialGeometry(gridSize) {
             "position": [],
         }
     }
-    for (let i = gridSize / -2; i < gridSize / 2; i++) {
-        for (let j = gridSize / -2; j < gridSize / 2; j++) {
-            geometry.attributes.position.push([i, j, -4])
+    for (let i = 0; i < gridSize; i++) {
+        for (let j = 0; j < gridSize; j++) {
+            geometry.attributes.position.push([i / 10, j / 10, 1])
         }
     }
+    // console.log("position.length: ", geometry.attributes.position.length)
     // Make triangles
-    for (let i = 0; i < (Math.pow(gridSize, 2) / 2) - gridSize - 1; i++) {
+    for (let i = 0; i < geometry.attributes.position.length - gridSize - 1; i++) {
         geometry.triangles.push([i, i + 1, i + gridSize])
         geometry.triangles.push([i + 1, i + gridSize, i + gridSize + 1])
+        // console.log("i: ", i)
      }
     // console.log("333", geometry)
     return geometry
-}
-
-function swap(a, b) {
-    const tmp = b
-    b = a
-    a = tmp
-    return {a: a, b: b}
 }
 
 function createRandomPoint(x1, y1, x2, y2) {
@@ -107,7 +97,7 @@ function createFault(vertexes) {
     const {x, y} = createRandomPoint(5, 5, window.gridSize - 5, window.gridSize - 5)
     const n = getRandomNormal()
     const p = [x, y, -4]
-    let displacement = 2
+    let displacement = 0.3
     // const displacementNormalization = displacement / vertexes.length
     for (let i = 0; i < vertexes.length; i++) {
         if(determinePointIsLeftOfFault(vertexes[i], p, n)) {
@@ -122,8 +112,8 @@ function createFault(vertexes) {
 
 function generateTerrain(slices, data) {
     for (let i = 0; i < slices; i++) {
-        console.log("creating!!!", slices)
-        console.log("i: ", i)
+        // console.log("creating!!!", slices)
+        // console.log("i: ", i)
         createFault(data.attributes.position)
     }
 }
@@ -131,7 +121,11 @@ function generateTerrain(slices, data) {
 /**
  * Compile, link, set up geometry
  */
-async function setupFaultingView(event) {
+async function setupScene(scene, options) {
+    window.slices = options?.slices ?? 5
+    window.gridSize = options?.resolution ?? 100
+    console.log("scene: ",scene)
+    console.log("options: ", options)
     console.log("in here!!")
     window.gl = document.querySelector('canvas').getContext('webgl2',
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
@@ -145,21 +139,17 @@ async function setupFaultingView(event) {
     window.m = m4ident()
     window.v = m4ident()
     window.p = m4ident()
+    window.maxGridSize = 250
 
-    window.m = m4scale(1 / window.gridSize, 1 / window.gridSize, 1 / window.gridSize)
+    // window.m = m4scale(1 / window.gridSize, 1 / window.gridSize, 1 / window.gridSize)
 
     // let data = await fetch(window.dataSource).then(r=>r.json())
     // addNormals(data)
     let data = createInitialGeometry(window.gridSize)
     console.log("what is data??", data)
     addNormals(data)
-    // document.getElementById("fractures-input").addEventListener("change", (event) => {
-    //     window.slices = event.target.value
-    //     generateTerrain(window.slices)
-    // })
-    //
-    // window.slices = document.getElementById('slices').defaultValue
-    window.slices = 1
+
+
     generateTerrain(window.slices, data)
     window.geom = setupGeometry(data)
 

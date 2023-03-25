@@ -86,6 +86,7 @@ async function setupGeometryView(event) {
     window.p = m4ident()
 
     let data = await fetch(window.dataSource).then(r=>r.json())
+    console.log("what are normals??", data)
     addNormals(data)
     window.geom = setupGeometry(data)
     setupCanvas().then(() => {
