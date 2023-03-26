@@ -8,11 +8,11 @@ function draw() {
     gl.useProgram(window.program)
 
     gl.bindVertexArray(window.geom.vao)
-    let lightdir = normalize([1, 1, 1])
+    let lightdir = normalize([1, 10, 10])
     let halfway = normalize(add(lightdir, [0, 0, 1]))
     gl.uniform3fv(gl.getUniformLocation(window.program,'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir'), lightdir)
-    gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 0])
+    gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 1])
 
     gl.uniform4fv(gl.getUniformLocation(window.program, 'color'), illiOrange)
     gl.uniformMatrix4fv(gl.getUniformLocation(window.program, 'p'), false, p)
@@ -28,7 +28,7 @@ function faultingTimeStep(milliseconds) {
     // window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
     window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
     window.v = m4view(
-        [0, 3, 10],
+        [0, 7, 10],
         [0, 0, 0],
         [0, 1, 0]
     )
@@ -57,8 +57,11 @@ function createInitialGeometry(gridSize) {
     // console.log("position.length: ", geometry.attributes.position.length)
     // Make triangles
     for (let i = 0; i < geometry.attributes.position.length - gridSize - 1; i++) {
-        geometry.triangles.push([i, i + 1, i + gridSize])
-        geometry.triangles.push([i + gridSize, i + 1, i + gridSize + 1])
+        if (i % gridSize === gridSize - 1) {
+            continue
+        }
+        geometry.triangles.push([i + 1, i, i + gridSize])
+        geometry.triangles.push([i + 1, i + gridSize, i + gridSize + 1])
         // console.log("i: ", i)
      }
     // console.log("333", geometry)
@@ -133,7 +136,7 @@ async function setupScene(scene, options) {
     )
     let vs = await fetch(window.vertexShader).then(res => res.text())
     let fs = await fetch(window.fragmentShader).then(res => res.text())
-    compileAndLinkGLSL(vs,fs)
+    compileAndLinkGLSL(vs, fs)
     gl.enable(gl.DEPTH_TEST)
     // window.scale = 0.01
     window.m = m4ident()
