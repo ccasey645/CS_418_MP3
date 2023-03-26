@@ -14,7 +14,7 @@ function draw() {
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir'), lightdir)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 1])
 
-    gl.uniform4fv(gl.getUniformLocation(window.program, 'color'), illiOrange)
+    gl.uniform4fv(gl.getUniformLocation(window.program, 'color'), groundColor)
     gl.uniformMatrix4fv(gl.getUniformLocation(window.program, 'p'), false, p)
     gl.uniformMatrix4fv(gl.getUniformLocation(window.program, 'mv'), false, m4mult(v,m))
     gl.drawElements(window.geom.mode, window.geom.count, window.geom.type, 0)
@@ -32,7 +32,6 @@ function faultingTimeStep(milliseconds) {
         [0, 0, 0],
         [0, 1, 0]
     )
-    // console.log("what if view??", window.v)
     // gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
 
 
@@ -49,12 +48,11 @@ function createInitialGeometry(gridSize) {
             "position": [],
         }
     }
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
+    for (let i = Math.floor(gridSize / -2); i < Math.floor(gridSize / 2); i++) {
+        for (let j = Math.floor(gridSize / -2); j < Math.floor(gridSize / 2); j++) {
             geometry.attributes.position.push([i, j, 0])
         }
     }
-    // console.log("position.length: ", geometry.attributes.position.length)
     // Make triangles
     for (let i = 0; i < geometry.attributes.position.length - gridSize - 1; i++) {
         if (i % gridSize === gridSize - 1) {
@@ -62,9 +60,7 @@ function createInitialGeometry(gridSize) {
         }
         geometry.triangles.push([i + 1, i, i + gridSize])
         geometry.triangles.push([i + 1, i + gridSize, i + gridSize + 1])
-        // console.log("i: ", i)
      }
-    // console.log("333", geometry)
     return geometry
 }
 
@@ -104,7 +100,6 @@ function createFault(vertexes) {
     // const displacementNormalization = displacement / vertexes.length
     for (let i = 0; i < vertexes.length; i++) {
         if(determinePointIsLeftOfFault(vertexes[i], p, n)) {
-            console.log("creatin fault!!")
             vertexes[i][2] += displacement
             // displacement -= displacementNormalization
         } else {
@@ -115,8 +110,6 @@ function createFault(vertexes) {
 
 function generateTerrain(slices, data) {
     for (let i = 0; i < slices; i++) {
-        // console.log("creating!!!", slices)
-        // console.log("i: ", i)
         createFault(data.attributes.position)
     }
 }
@@ -127,9 +120,8 @@ function generateTerrain(slices, data) {
 async function setupScene(scene, options) {
     window.slices = options?.slices ?? 5
     window.gridSize = options?.resolution ?? 100
-    console.log("scene: ",scene)
-    console.log("options: ", options)
-    console.log("in here!!")
+    // console.log("scene: ",scene)
+    // console.log("options: ", options)
     window.gl = document.querySelector('canvas').getContext('webgl2',
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
         {antialias: false, depth:true, preserveDrawingBuffer:true}
@@ -145,11 +137,7 @@ async function setupScene(scene, options) {
     window.maxGridSize = 250
     // window.m = m4mult_(window.m, m4scale(window.scale, window.scale, window.scale))
     // window.m = m4scale(1 / window.gridSize, 1 / window.gridSize, 1 / window.gridSize)
-
-    // let data = await fetch(window.dataSource).then(r=>r.json())
-    // addNormals(data)
     let data = createInitialGeometry(window.gridSize)
-    console.log("what is data??", data)
     generateTerrain(window.slices, data)
     addNormals(data)
 
