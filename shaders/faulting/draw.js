@@ -8,11 +8,11 @@ function draw() {
     gl.useProgram(window.program)
 
     gl.bindVertexArray(window.geom.vao)
-    let lightdir = normalize([0, 100, 0])
-    let halfway = normalize(add(lightdir, [0, 0, 3]))
+    let lightdir = normalize([1, 1, 1])
+    let halfway = normalize(add(lightdir, [0, 0, 1]))
     gl.uniform3fv(gl.getUniformLocation(window.program,'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir'), lightdir)
-    gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 1])
+    gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 0])
 
     gl.uniform4fv(gl.getUniformLocation(window.program, 'color'), illiOrange)
     gl.uniformMatrix4fv(gl.getUniformLocation(window.program, 'p'), false, p)
@@ -24,16 +24,16 @@ function faultingTimeStep(milliseconds) {
     let seconds = milliseconds / 1000
     let s2 = Math.cos(seconds/2)-1
 
-    let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
+    // let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
     // window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
     window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
     window.v = m4view(
-        [0, 0, 3],
+        [0, 3, 10],
         [0, 0, 0],
         [0, 1, 0]
     )
     // console.log("what if view??", window.v)
-    gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
+    // gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
 
 
     draw()
@@ -51,14 +51,14 @@ function createInitialGeometry(gridSize) {
     }
     for (let i = 0; i < gridSize; i++) {
         for (let j = 0; j < gridSize; j++) {
-            geometry.attributes.position.push([i / 10, j / 10, 1])
+            geometry.attributes.position.push([i, j, 0])
         }
     }
     // console.log("position.length: ", geometry.attributes.position.length)
     // Make triangles
     for (let i = 0; i < geometry.attributes.position.length - gridSize - 1; i++) {
         geometry.triangles.push([i, i + 1, i + gridSize])
-        geometry.triangles.push([i + 1, i + gridSize, i + gridSize + 1])
+        geometry.triangles.push([i + gridSize, i + 1, i + gridSize + 1])
         // console.log("i: ", i)
      }
     // console.log("333", geometry)
@@ -96,7 +96,7 @@ function determinePointIsLeftOfFault(b, p, n) {
 function createFault(vertexes) {
     const {x, y} = createRandomPoint(5, 5, window.gridSize - 5, window.gridSize - 5)
     const n = getRandomNormal()
-    const p = [x, y, -4]
+    const p = [x, y, 0]
     let displacement = 0.3
     // const displacementNormalization = displacement / vertexes.length
     for (let i = 0; i < vertexes.length; i++) {
@@ -135,22 +135,21 @@ async function setupScene(scene, options) {
     let fs = await fetch(window.fragmentShader).then(res => res.text())
     compileAndLinkGLSL(vs,fs)
     gl.enable(gl.DEPTH_TEST)
-    window.scale = 0.05
+    // window.scale = 0.01
     window.m = m4ident()
     window.v = m4ident()
     window.p = m4ident()
     window.maxGridSize = 250
-
+    // window.m = m4mult_(window.m, m4scale(window.scale, window.scale, window.scale))
     // window.m = m4scale(1 / window.gridSize, 1 / window.gridSize, 1 / window.gridSize)
 
     // let data = await fetch(window.dataSource).then(r=>r.json())
     // addNormals(data)
     let data = createInitialGeometry(window.gridSize)
     console.log("what is data??", data)
+    generateTerrain(window.slices, data)
     addNormals(data)
 
-
-    generateTerrain(window.slices, data)
     window.geom = setupGeometry(data)
 
     setupCanvas().then(() => {
