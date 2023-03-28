@@ -64,6 +64,39 @@ function createInitialGeometry(gridSize) {
     return geometry
 }
 
+function doVerticalSeperation(vertexes) {
+    let xMin, zMin, xMax, zMax, h
+    let separationConstant = 0.3
+    if (vertexes.length > 0) {
+        xMin = vertexes[0][0]
+        zMin = vertexes[0][2]
+        xMax = vertexes[0][0]
+        zMax = vertexes[0][2]
+    }
+
+    for (let i = 0; i < vertexes.length; i++) {
+        if (vertexes[i][0] < xMin) {
+            xMin = vertexes[i][0]
+        }
+        if (vertexes[i][0] > xMax) {
+            xMax = vertexes[i][0]
+        }
+        if (vertexes[i][2] > zMax) {
+            zMax = vertexes[i][2]
+        }
+        if (vertexes[i][2] < zMin) {
+            zMin = vertexes[i][2]
+        }
+    }
+
+    h = (xMax - xMin) * separationConstant
+    if (h !== 0) {
+        for (let i = 0; i < vertexes.length; i++) {
+            vertexes[i][2] = ((vertexes[i][2] - zMin) / (zMax - zMin)) * h - (h / 2)
+        }
+    }
+}
+
 function createRandomPoint(x1, y1, x2, y2) {
     const randomX = Math.random() * (x2 - x1) + x1
     const randomY = Math.random() * (y2 - y1) + y1
@@ -112,6 +145,7 @@ function generateTerrain(slices, data) {
     for (let i = 0; i < slices; i++) {
         createFault(data.attributes.position)
     }
+    doVerticalSeperation(data.attributes.position)
 }
 
 /**
