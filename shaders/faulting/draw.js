@@ -9,10 +9,13 @@ function draw() {
 
     gl.bindVertexArray(window.geom.vao)
     let lightdir = normalize([1, 10, 10])
-    let halfway = normalize(add(lightdir, [0, 0, 1]))
+    let halfway = normalize(add(lightdir, window.eyedir))
     gl.uniform3fv(gl.getUniformLocation(window.program,'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir'), lightdir)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 1])
+
+    gl.uniform1f(gl.getUniformLocation(window.program,'maxHeight'), window.maxTerrainHeight)
+    gl.uniform1f(gl.getUniformLocation(window.program,'minHeight'), window.minTerrainHeight)
 
     gl.uniform4fv(gl.getUniformLocation(window.program, 'color'), groundColor)
     gl.uniformMatrix4fv(gl.getUniformLocation(window.program, 'p'), false, p)
@@ -24,15 +27,16 @@ function faultingTimeStep(milliseconds) {
     let seconds = milliseconds / 1000
     let s2 = Math.cos(seconds/2)-1
 
-    // let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
-    // window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
-    window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
-    window.v = m4view(
-        [0, 7, 10],
-        [0, 0, 0],
-        [0, 1, 0]
-    )
-    // gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
+    let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
+    window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
+    // window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
+    // window.v = m4view(
+    //     [0, 1, 3],
+    //     [0, 0, 0],
+    //     [0, 1, 0]
+    // )
+    window.eyedir =  new Float32Array(m4normalized_(eye))
+    gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), window.eyedir)
 
 
     draw()
@@ -89,6 +93,9 @@ function doVerticalSeperation(vertexes) {
         }
     }
 
+    window.maxTerrainHeight = zMax
+    window.minTerrainHeight = zMin
+
     h = (xMax - xMin) * separationConstant
     if (h !== 0) {
         for (let i = 0; i < vertexes.length; i++) {
@@ -130,7 +137,7 @@ function createFault(vertexes) {
     const n = getRandomNormal()
     const p = [x, y, 0]
     let displacement = 0.3
-    // const displacementNormalization = displacement / vertexes.length
+    const displacementNormalization = displacement / vertexes.length
     for (let i = 0; i < vertexes.length; i++) {
         if(determinePointIsLeftOfFault(vertexes[i], p, n)) {
             vertexes[i][2] += displacement
@@ -151,11 +158,22 @@ function generateTerrain(slices, data) {
 /**
  * Compile, link, set up geometry
  */
-async function setupScene(scene, options) {
+async function setupTerrainView(options) {
     window.slices = options?.slices ?? 5
     window.gridSize = options?.resolution ?? 100
-    // console.log("scene: ",scene)
-    // console.log("options: ", options)
+    console.log("options: ", options)
+    if (options.lighting === "specular") {
+        window.fragmentShader = "shaders/faulting/fragment.glsl"
+    } else if (options.lighting === "lampart") {
+        window.fragmentShader = "shaders/faulting/fragment-lampart.glsl"
+    } else if (options.lighting === "ramp") {
+        window.fragmentShader = "shaders/faulting/fragment-color-ramp.glsl"
+    } else {
+        window.fragmentShader = "shaders/faulting/fragment-lampart.glsl"
+    }
+
+
+
     window.gl = document.querySelector('canvas').getContext('webgl2',
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
         {antialias: false, depth:true, preserveDrawingBuffer:true}
@@ -164,12 +182,12 @@ async function setupScene(scene, options) {
     let fs = await fetch(window.fragmentShader).then(res => res.text())
     compileAndLinkGLSL(vs, fs)
     gl.enable(gl.DEPTH_TEST)
-    // window.scale = 0.01
+    window.scale = 1 / (window.gridSize / 4)
     window.m = m4ident()
     window.v = m4ident()
     window.p = m4ident()
     window.maxGridSize = 250
-    // window.m = m4mult_(window.m, m4scale(window.scale, window.scale, window.scale))
+    window.m = m4mult_(window.m, m4scale(window.scale, window.scale, window.scale))
     // window.m = m4scale(1 / window.gridSize, 1 / window.gridSize, 1 / window.gridSize)
     let data = createInitialGeometry(window.gridSize)
     generateTerrain(window.slices, data)

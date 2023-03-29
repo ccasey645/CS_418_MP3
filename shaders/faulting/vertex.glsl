@@ -2,9 +2,11 @@
 in vec4 position;
 in vec3 normal;
 out vec3 outnormal;
+out float outheight;
 uniform mat4 p;
 uniform mat4 mv;
 void main() {
     gl_Position = p * mv * position;
     outnormal = mat3(mv) * normal;
+    outheight = position.z;
 }

@@ -6,16 +6,18 @@ const controlOptions = {
     "geometry": {
         "label": "Spinning Geometry",
         "options": {
-            "specularLighting": {
+            "lighting": {
                 "type": "radio",
-                "label": "Specular Lighting"
-            }
+                "options": {
+                    "specular": "Specular Lighting",
+                    "lampart": "Lambert’s-law diffuse lighting;",
+                },
+            },
         }
     },
     "terrain": {
         "label": "Required: Faulting-method terrain",
         "options": {
-            "default": true,
             "resolution": {
                 "type":"number",
                 "default":100,
@@ -25,6 +27,14 @@ const controlOptions = {
                 "type":"number",
                 "default":100,
                 "label":"Fractures"
+            },
+            "lighting": {
+                "type": "radio",
+                "options": {
+                    "specular": "Shiny: Specular Lighting",
+                    "lampart": "Lambert’s-law diffuse lighting;",
+                    "ramp": "Height-based color ramp",
+                },
             },
         }
     }

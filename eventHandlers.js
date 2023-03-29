@@ -18,38 +18,38 @@ const animationMap = {
         vertexShader: `${directory}/faulting/vertex.glsl`,
         fragmentShader: `${directory}/faulting/fragment.glsl`,
         dataSource: `${directory}/faulting/geometry.json`,
-        setup: setupScene,
+        setup: setupTerrainView,
     }
 }
 
-const terrainConfig = {
-    "terrain": {
-        "label": "Required: Terrain",
-        "options": {
-            "resolution": {
-                "type": "number", "default":100, "label": "Grid size"
-            },
-            "slices": {
-                "type":"number",
-                "default":100,
-                "label":"Fractures"
-            },
-            "smooth": {
-                "type":"checkbox",
-                "default":true,
-                "label":"Smooth shading"
-            },
-            "erode": {
-                "type":"radio",
-                "options": {
-                    "rough":"No Weathering",
-                    "spheroid":"Spheroidal Weathering",
-                    "drain":"Hydraulic drainage"
-                }
-            }
-        }
-    }
-}
+// const terrainConfig = {
+//     "terrain": {
+//         "label": "Required: Terrain",
+//         "options": {
+//             "resolution": {
+//                 "type": "number", "default":100, "label": "Grid size"
+//             },
+//             "slices": {
+//                 "type":"number",
+//                 "default":100,
+//                 "label":"Fractures"
+//             },
+//             "smooth": {
+//                 "type":"checkbox",
+//                 "default":true,
+//                 "label":"Smooth shading"
+//             },
+//             "erode": {
+//                 "type":"radio",
+//                 "options": {
+//                     "rough":"No Weathering",
+//                     "spheroid":"Spheroidal Weathering",
+//                     "drain":"Hydraulic drainage"
+//                 }
+//             }
+//         }
+//     }
+// }
 
 /**
  * onChange handler for the radio buttons. Look up from the radio button's value in the map above to get the name
@@ -57,14 +57,14 @@ const terrainConfig = {
  * needed to start the animation.
  * @param animationName
  */
-function changeAnimation(animationName) {
+function changeAnimation(animationName, options) {
     if (Object.keys(animationMap).indexOf(animationName) > -1) {
         const newAnimation = animationMap[animationName]
         window.currentAnimation = newAnimation.currentAnimation
         window.vertexShader = newAnimation.vertexShader
         window.fragmentShader = newAnimation.fragmentShader
         window.dataSource = newAnimation.dataSource
-        newAnimation.setup()
+        newAnimation.setup(options)
     } else {
         console.error("Animation does not exist!")
     }
@@ -85,19 +85,24 @@ async function setupCanvas() {
  * mouse. Add the callbacks to be called when these events happen.
  */
 function setupEventHandlers() {
-    changeAnimation("terrain")
-    document.getElementById("radio-form").addEventListener('change', (event) => {
-        event.preventDefault()
-        // const value = document.getElementById("radio-form")
-        console.log("what is value??: ", event)
-        changeAnimation(event.target.value)
-    })
+    console.log("changing!!")
+    changeAnimation("geometry")
+    // document.getElementById("radio-form").addEventListener('change', (event) => {
+    //     event.preventDefault()
+    //     // const value = document.getElementById("radio-form")
+    //     console.log("what is value??: ", event)
+    //     changeAnimation(event.target.value)
+    // })
 
     window.gridSize = 50
-    document.getElementById("slices").addEventListener("change", (event) => {
-        event.preventDefault()
-        window.gridSize = event.target.value
-    })
+    // document.getElementById("slices").addEventListener("change", (event) => {
+    //     event.preventDefault()
+    //     window.gridSize = event.target.value
+    // })
+}
+
+function setupScene(scene, options) {
+    changeAnimation(scene, options)
 }
 
 /**
