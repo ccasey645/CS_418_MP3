@@ -18,10 +18,11 @@ void main() {
     vec3 normal = normalize(outnormal);
     vec3 surfacenormal = normalize(outsurfacenormal);
     bool cliff = surfacenormal.z < 0.8;
+    float shinyness = cliff ? 150.0 : 50.0;
     float r = cliff ? 0.411 : min(1.0 * outheight / maxHeight, 1.0);
     float g = cliff ? 0.411 : min(cos(1.0 * outheight / minHeight), 1.0);
     float b = cliff ? 0.411 : min(sin(1.0 * outheight / minHeight), 1.0);
-    float blinn = pow(max(dot(halfway, normal), 0.0), 150.0);
+    float blinn = pow(max(dot(halfway, normal), 0.0), shinyness);
     float lambert = max(0.0, dot(lightdir, normal));
     fragColor = vec4(
             vec3(r, g, b) * (lambert * lightcolor) + lightcolor * blinn,
