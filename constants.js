@@ -34,6 +34,7 @@ const controlOptions = {
                     "specular": "Shiny: Specular Lighting",
                     "lampart": "Lambert’s-law diffuse lighting;",
                     "ramp": "Height-based color ramp",
+                    "cliff": "Rocky cliffs",
                 },
             },
         }
