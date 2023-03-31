@@ -51,6 +51,12 @@ window.addEventListener('load', event=> {
                     if (num.value != opt2.default)
                         num.checked = opt2.default // for checkbox
                     num.step = 'any' // for number; ignored otherwise
+                    if (opt2.max !== undefined) {
+                        num.max = opt2.max
+                    }
+                    if (opt2.min !== undefined) {
+                        num.min = opt2.min
+                    }
                     let lab = document.createElement('label')
                     lab.append(num)
                     lab.append(opt2.label)

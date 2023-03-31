@@ -207,7 +207,6 @@ async function setupTerrainView(options) {
     window.p = m4ident()
     window.maxGridSize = 250
     window.m = m4mult_(window.m, m4scale(window.scale, window.scale, window.scale))
-    // window.m = m4scale(1 / window.gridSize, 1 / window.gridSize, 1 / window.gridSize)
     let data = createInitialGeometry(window.gridSize)
     generateTerrain(window.slices, data)
     addNormals(data)

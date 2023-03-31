@@ -84,29 +84,11 @@ async function setupCanvas() {
  * Set up event handlers needed for events for user input like clicking on the different radio buttons and moving the
  * mouse. Add the callbacks to be called when these events happen.
  */
-function setupEventHandlers() {
-    console.log("changing!!")
-    changeAnimation("geometry")
-    // document.getElementById("radio-form").addEventListener('change', (event) => {
-    //     event.preventDefault()
-    //     // const value = document.getElementById("radio-form")
-    //     console.log("what is value??: ", event)
-    //     changeAnimation(event.target.value)
-    // })
-
-    window.gridSize = 50
-    // document.getElementById("slices").addEventListener("change", (event) => {
-    //     event.preventDefault()
-    //     window.gridSize = event.target.value
-    // })
-}
-
 function setupScene(scene, options) {
     changeAnimation(scene, options)
 }
 
 /**
- * Event listener to initialize everything after the page is loaded.
+ * Event listener to resize canvas if the browser is resized.
  */
-window.addEventListener('load', setupEventHandlers)
 window.addEventListener('resize', fillScreen)

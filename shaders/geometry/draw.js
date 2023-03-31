@@ -77,6 +77,11 @@ async function setupGeometryView(options) {
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
         {antialias: false, depth:true, preserveDrawingBuffer:true}
     )
+    if (options.lighting === "lampart") {
+        window.fragmentShader = "shaders/geometry/fragment-lampart.glsl"
+    } else {
+        window.fragmentShader = "shaders/geometry/fragment.glsl"
+    }
     let vs = await fetch(window.vertexShader).then(res => res.text())
     let fs = await fetch(window.fragmentShader).then(res => res.text())
     compileAndLinkGLSL(vs,fs)

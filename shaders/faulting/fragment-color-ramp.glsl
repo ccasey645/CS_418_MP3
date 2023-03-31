@@ -12,9 +12,9 @@ uniform float minHeight;
 
 
 void main() {
-    float r = min(1.0 * outheight / maxHeight, 1.0);
-    float g = min(cos(1.0 * outheight / minHeight), 1.0);
-    float b = min(sin(1.0 * outheight / minHeight), 1.0);
+    float r = min(outheight / maxHeight, 1.0);
+    float g = min(cos(outheight / minHeight), 1.0);
+    float b = min(sin(outheight / minHeight), 1.0);
     vec3 normal = normalize(outnormal);
     float blinn = pow(max(dot(halfway, normal), 0.0), 150.0);
     float lambert = max(0.0, dot(lightdir, normal));

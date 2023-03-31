@@ -9,8 +9,8 @@ const controlOptions = {
             "lighting": {
                 "type": "radio",
                 "options": {
-                    "specular": "Specular Lighting",
-                    "lampart": "Lambert’s-law diffuse lighting;",
+                    "specular": "Specular Lighting With Two Light Sources",
+                    "lampart": "Lambert’s-law diffuse lighting with two light sources",
                 },
             },
         }
@@ -21,12 +21,15 @@ const controlOptions = {
             "resolution": {
                 "type":"number",
                 "default":100,
-                "label":"Grid size"
+                "label":"Grid size",
+                "max": 250,
+                "min": 2
             },
             "slices": {
                 "type":"number",
                 "default":100,
-                "label":"Fractures"
+                "label":"Fractures",
+                "min": 0
             },
             "lighting": {
                 "type": "radio",
