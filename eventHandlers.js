@@ -88,7 +88,18 @@ function setupScene(scene, options) {
     changeAnimation(scene, options)
 }
 
+function initCanvas() {
+    window.gl = document.querySelector('canvas').getContext('webgl2',
+        // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
+        {antialias: false, depth:true, preserveDrawingBuffer:true}
+    )
+    fillScreen()
+    gl.clearColor(...IlliniBlue)
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+}
+
 /**
  * Event listener to resize canvas if the browser is resized.
  */
+window.addEventListener('load', initCanvas)
 window.addEventListener('resize', fillScreen)
