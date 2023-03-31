@@ -2,7 +2,7 @@
  * Prepare the buffers and setup the variables to send to the vertex and
  * fragment shaders to draw the object on the screen.
  */
-function draw() {
+function drawGeometry() {
     gl.clearColor(...IlliniBlue)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     gl.useProgram(window.program)
@@ -39,8 +39,10 @@ function timeStep(milliseconds) {
     )
     // gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
 
-    draw()
-    requestAnimationFrame(timeStep)
+    drawGeometry()
+    if (window.currentAnimation === animationMap.geometry.currentAnimation) {
+        requestAnimationFrame(timeStep)
+    }
 }
 
 function addNormals(data) {
@@ -70,11 +72,16 @@ function addNormals(data) {
 /**
  * Compile, link, set up geometry
  */
-async function setupGeometryView(event) {
+async function setupGeometryView(options) {
     window.gl = document.querySelector('canvas').getContext('webgl2',
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
         {antialias: false, depth:true, preserveDrawingBuffer:true}
     )
+    if (options.lighting === "lampart") {
+        window.fragmentShader = "shaders/geometry/fragment-lampart.glsl"
+    } else {
+        window.fragmentShader = "shaders/geometry/fragment.glsl"
+    }
     let vs = await fetch(window.vertexShader).then(res => res.text())
     let fs = await fetch(window.fragmentShader).then(res => res.text())
     compileAndLinkGLSL(vs,fs)
@@ -89,7 +96,6 @@ async function setupGeometryView(event) {
     setupCanvas().then(() => {
         fillScreen()
         requestAnimationFrame(timeStep)
-
     })
 }
 
