@@ -118,23 +118,6 @@ function getRandomNormal() {
     ]
 }
 
-// function findCliffs(geometry) {
-//     let p0, p1, p2
-//     for (let i = 0; i < geometry.triangles.length; i++) {
-//         p0 = geometry.attributes.position[geometry.triangles[i][0]]
-//         p1 = geometry.attributes.position[geometry.triangles[i][1]]
-//         p2 = geometry.attributes.position[geometry.triangles[i][2]]
-//
-//         let e0 = m4sub_(p0,p2)
-//         let e1 = m4sub_(p1,p2)
-//         let n = m4cross_(e0,e1)
-//         // console.log("what is normal??", n)
-//         if (n[0] > 20 || n[1] > 20) {
-//             geometry.attributes.cliff[i] = 1.0
-//         }
-//     }
-// }
-
 /**
  * Greater than or equal to zero and vectors in vertex b are on the left of the fault. Othwerwize
  * it's on the right.
