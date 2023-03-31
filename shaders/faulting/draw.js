@@ -8,7 +8,7 @@ function draw() {
     gl.useProgram(window.program)
 
     gl.bindVertexArray(window.geom.vao)
-    let lightdir = normalize([1, 10, 10])
+    let lightdir = normalize([1, -10, 10])
     let halfway = normalize(add(lightdir, window.eyedir))
     gl.uniform3fv(gl.getUniformLocation(window.program,'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir'), lightdir)

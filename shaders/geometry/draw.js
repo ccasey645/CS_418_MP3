@@ -8,14 +8,14 @@ function drawGeometry() {
     gl.useProgram(window.program)
 
     gl.bindVertexArray(window.geom.vao)
-    let lightdir = normalize([1, 1, 1])
-    let halfway = normalize(add(lightdir, [1, 0, 1]))
+    let lightdir = normalize([1, -0.6, 0])
+    let halfway = normalize(add(lightdir, window.eyedir))
     gl.uniform3fv(gl.getUniformLocation(window.program,'halfway'), halfway)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir'), lightdir)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor'), [1, 1, 0])
 
     lightdir = normalize([-2, 0, 1])
-    halfway = normalize(add(lightdir, [0, 0, 1]))
+    halfway = normalize(add(lightdir, window.eyedir))
     gl.uniform3fv(gl.getUniformLocation(window.program,'halfway2'), halfway)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightdir2'), lightdir)
     gl.uniform3fv(gl.getUniformLocation(window.program,'lightcolor2'), [0.5, 0, 1])
@@ -27,17 +27,18 @@ function drawGeometry() {
 
 function timeStep(milliseconds) {
     let seconds = milliseconds / 1000
-    // let s2 = Math.cos(seconds/2)-1
+    let s2 = Math.cos(seconds/2)-1
 
-    // let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
-    // window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
-    window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
-    window.v = m4view(
-        [0, 0, 3],
-        [0, 0, 0],
-        [0, 1, 0]
-    )
-    // gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
+    let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
+    window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
+    // window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
+    // window.v = m4view(
+    //     [0, 0, 3],
+    //     [0, 0, 0],
+    //     [0, 1, 0]
+    // )
+    window.eyedir =  new Float32Array(m4normalized_(eye))
+    gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
 
     drawGeometry()
     if (window.currentAnimation === animationMap.geometry.currentAnimation) {
