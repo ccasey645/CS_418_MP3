@@ -71,7 +71,6 @@ window.addEventListener('load', event=> {
     // register a callback for the button too
     let b = document.querySelector('.controls input[type="submit"]')
     b.addEventListener('click', event => {
-        console.log("clicked!!")
         event.preventDefault() // don't send the server a POST action
         // retrieve form data
         let form = document.querySelector('form')
@@ -79,7 +78,6 @@ window.addEventListener('load', event=> {
         // extract and delete the top-level form item
         let scene = data.get('controlOptions')
         data.delete('controlOptions')
-        console.log("what is data??", data)
         // copy other content, converting number types and adding defaults as needed
         let options = Object.fromEntries(Array.from(data.entries()).map(([k,v])=>{
             let t = controlOptions[scene].options?.[k]?.['type']

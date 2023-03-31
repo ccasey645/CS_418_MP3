@@ -131,16 +131,13 @@ function determinePointIsLeftOfFault(b, p, n) {
 }
 
 
-function createFault(vertexes) {
+function createFault(vertexes, displacement) {
     const {x, y} = createRandomPoint(5, 5, window.gridSize - 5, window.gridSize - 5)
     const n = getRandomNormal()
     const p = [x, y, 0]
-    let displacement = 0.3
-    const displacementNormalization = displacement / vertexes.length
     for (let i = 0; i < vertexes.length; i++) {
         if(determinePointIsLeftOfFault(vertexes[i], p, n)) {
             vertexes[i][2] += displacement
-            // displacement -= displacementNormalization
         } else {
             vertexes[i][2] -= displacement
         }
@@ -148,8 +145,12 @@ function createFault(vertexes) {
 }
 
 function generateTerrain(slices, data) {
+    let displacement = 0.3
+    const displacementNormalization = displacement / (slices * 2)
     for (let i = 0; i < slices; i++) {
-        createFault(data.attributes.position)
+        createFault(data.attributes.position, displacement)
+        displacement = Math.max(displacement - displacementNormalization, 0.07)
+        // displacement -= displacementNormalization
     }
     doVerticalSeperation(data.attributes.position)
 }
