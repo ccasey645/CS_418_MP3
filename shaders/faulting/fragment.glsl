@@ -3,7 +3,6 @@ precision highp float;
 uniform vec4 color;
 out vec4 fragColor;
 in vec3 outnormal;
-// uniform vec3 eyedir;
 uniform vec3 lightdir;
 uniform vec3 lightcolor;
 uniform vec3 halfway;

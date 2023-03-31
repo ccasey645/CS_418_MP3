@@ -9,8 +9,8 @@ const controlOptions = {
             "lighting": {
                 "type": "radio",
                 "options": {
-                    "specular": "Specular Lighting With Two Light Sources",
-                    "lampart": "Lambert’s-law diffuse lighting with two light sources",
+                    "specular": "Specular Lighting With Two Light Sources. Camera is moving, model and light sources are stationary.",
+                    "lampart": "Lambert’s-law diffuse lighting with two light sources. Camera is moving, model and light sources are stationary.",
                 },
             },
         }
@@ -34,10 +34,10 @@ const controlOptions = {
             "lighting": {
                 "type": "radio",
                 "options": {
-                    "specular": "Shiny: Specular Lighting",
-                    "lampart": "Lambert’s-law diffuse lighting;",
-                    "ramp": "Height-based color ramp",
-                    "cliff": "Rocky cliffs",
+                    "specular": "Shiny: Specular Lighting. Camera is moving, model and light source are stationary.",
+                    "lampart": "Lambert’s-law diffuse lighting. Camera is moving, model and light source are stationary.",
+                    "ramp": "Height-based color ramp. Camera is moving, model and light source are stationary.",
+                    "cliff": "Rocky cliffs. Camera is moving, model and light source are stationary.",
                 },
             },
         }
