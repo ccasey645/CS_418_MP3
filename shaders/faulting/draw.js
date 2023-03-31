@@ -152,8 +152,6 @@ function generateTerrain(slices, data) {
         createFault(data.attributes.position)
     }
     doVerticalSeperation(data.attributes.position)
-    console.log("what is data??", data)
-    // findCliffs(data)
 }
 
 /**
@@ -162,7 +160,6 @@ function generateTerrain(slices, data) {
 async function setupTerrainView(options) {
     window.slices = options?.slices ?? 5
     window.gridSize = options?.resolution ?? 100
-    console.log("options: ", options)
     if (options.lighting === "specular") {
         window.fragmentShader = "shaders/faulting/fragment.glsl"
     } else if (options.lighting === "lampart") {
