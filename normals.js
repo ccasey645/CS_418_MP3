@@ -1,3 +1,8 @@
+/**
+ * Calculate the normals of the vertexes and add them to the data object so we can use them in the shaders for lighting
+ * calculations.
+ * @param data
+ */
 function addNormals(data) {
     let normals = new Array(data.attributes.position.length)
     for(let i=0; i<normals.length; i+=1) normals[i] = new Array(3).fill(0)
