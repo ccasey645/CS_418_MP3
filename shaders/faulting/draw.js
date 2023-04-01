@@ -1,6 +1,6 @@
 /**
  * Prepare the buffers and setup the variables to send to the vertex and
- * fragment shaders to draw the object on the screen.
+ * fragment shaders to draw the terrain on the screen.
  */
 function draw() {
     gl.clearColor(...IlliniBlue)
@@ -23,18 +23,16 @@ function draw() {
     gl.drawElements(window.geom.mode, window.geom.count, window.geom.type, 0)
 }
 
+/**
+ * Set the view matrix to make the camera move back and forth around one side of the terrain.
+ * @param milliseconds Number the current time in milliseconds
+ */
 function faultingTimeStep(milliseconds) {
     let seconds = milliseconds / 1000
     let s2 = Math.cos(seconds/2)-1
 
     let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
     window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
-    // window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
-    // window.v = m4view(
-    //     [0, 1, 3],
-    //     [0, 0, 0],
-    //     [0, 1, 0]
-    // )
     window.eyedir =  new Float32Array(m4normalized_(eye))
     gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), window.eyedir)
 
@@ -44,6 +42,11 @@ function faultingTimeStep(milliseconds) {
     }
 }
 
+/**
+ * Create the grid used for the terrain. Split grid squares in to triangles to be used by the shader.
+ * @param gridSize
+ * @returns {{triangles: *[], attributes: {position: *[]}}}
+ */
 function createInitialGeometry(gridSize) {
     var geometry = {
         "triangles": [],
@@ -67,6 +70,10 @@ function createInitialGeometry(gridSize) {
     return geometry
 }
 
+/**
+ * Calculate the vertical separation of the terrain.
+ * @param vertexes
+ */
 function doVerticalSeperation(vertexes) {
     let xMin, zMin, xMax, zMax, h
     let separationConstant = 0.3
@@ -103,12 +110,24 @@ function doVerticalSeperation(vertexes) {
     }
 }
 
+/**
+ * Create a random point in between the X and Y points passed in.
+ * @param x1
+ * @param y1
+ * @param x2
+ * @param y2
+ * @returns {{x: *, y: *}}
+ */
 function createRandomPoint(x1, y1, x2, y2) {
     const randomX = Math.random() * (x2 - x1) + x1
     const randomY = Math.random() * (y2 - y1) + y1
     return {x: randomX, y: randomY}
 }
 
+/**
+ * Create a random normal vector with z = 0
+ * @returns {(number|number)[]}
+ */
 function getRandomNormal() {
     const randomAngle = Math.random() * 2 * Math.PI
     return [
@@ -119,7 +138,7 @@ function getRandomNormal() {
 }
 
 /**
- * Greater than or equal to zero and vectors in vertex b are on the left of the fault. Othwerwize
+ * Greater than or equal to zero and vectors in vertex b are on the left of the fault. Othwerwise
  * it's on the right.
  * @param b Vertex of triangle
  * @param p random point
@@ -131,6 +150,11 @@ function determinePointIsLeftOfFault(b, p, n) {
 }
 
 
+/**
+ * Raise or lower the terrain's height based on what side of the created fault each vertex is on.
+ * @param vertexes
+ * @param displacement
+ */
 function createFault(vertexes, displacement) {
     const {x, y} = createRandomPoint(5, 5, window.gridSize - 5, window.gridSize - 5)
     const n = getRandomNormal()
@@ -144,13 +168,18 @@ function createFault(vertexes, displacement) {
     }
 }
 
+/**
+ * Create faults in the terrain for the specified nuber of slices, or faults, passed in. The initial fault will have the
+ * highest separation, and each subsequent fault will have a smaller separation (until a floor is reached).
+ * @param slices
+ * @param data
+ */
 function generateTerrain(slices, data) {
     let displacement = 0.3
     const displacementNormalization = displacement / (slices * 2)
     for (let i = 0; i < slices; i++) {
         createFault(data.attributes.position, displacement)
         displacement = Math.max(displacement - displacementNormalization, 0.07)
-        // displacement -= displacementNormalization
     }
     doVerticalSeperation(data.attributes.position)
 }

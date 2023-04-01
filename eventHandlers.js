@@ -3,7 +3,7 @@ const directory = "shaders"
 /**
  * Key value pairs for vertex, fragment, name of function that initializes the animation, and geometry data JSON files for each of the animations this program will
  * perform.
- * @type {{cpuMovement: {vertexShader: string, currentAnimation: string, fragmentShader: string, setup: ((function(): Promise<void>)|*), dataSource: string}, dancingLogo: {vertexShader: string, currentAnimation: string, fragmentShader: string, setup: ((function(): Promise<void>)|*), dataSource: string}, gpuMovement: {vertexShader: string, currentAnimation: string, fragmentShader: string, setup: ((function(): Promise<void>)|*), dataSource: string}, mouseMove: {vertexShader: string, currentAnimation: string, fragmentShader: string, setup: ((function(): Promise<void>)|*), dataSource: string}, collidingLogos: {vertexShader: string, currentAnimation: string, fragmentShader: string, setup: ((function(): Promise<void>)|*), dataSource: string}, pointCluster: {vertexShader: string, currentAnimation: string, fragmentShader: string, setup: ((function(): Promise<void>)|*), dataSource: string}}}
+ * @type {{geometry: {vertexShader: string, currentAnimation: string, fragmentShader: string, setup: ((function(*): Promise<void>)|*), dataSource: string}, terrain: {vertexShader: string, currentAnimation: string, fragmentShader: string, setup: ((function(*): Promise<void>)|*), dataSource: string}}}
  */
 const animationMap = {
     geometry: {
@@ -22,34 +22,6 @@ const animationMap = {
     }
 }
 
-// const terrainConfig = {
-//     "terrain": {
-//         "label": "Required: Terrain",
-//         "options": {
-//             "resolution": {
-//                 "type": "number", "default":100, "label": "Grid size"
-//             },
-//             "slices": {
-//                 "type":"number",
-//                 "default":100,
-//                 "label":"Fractures"
-//             },
-//             "smooth": {
-//                 "type":"checkbox",
-//                 "default":true,
-//                 "label":"Smooth shading"
-//             },
-//             "erode": {
-//                 "type":"radio",
-//                 "options": {
-//                     "rough":"No Weathering",
-//                     "spheroid":"Spheroidal Weathering",
-//                     "drain":"Hydraulic drainage"
-//                 }
-//             }
-//         }
-//     }
-// }
 
 /**
  * onChange handler for the radio buttons. Look up from the radio button's value in the map above to get the name
@@ -70,6 +42,10 @@ function changeAnimation(animationName, options) {
     }
 }
 
+/**
+ * Configure the HTML canvas to work with WebGL by running some setup steps
+ * @returns {Promise<void>}
+ */
 async function setupCanvas() {
     window.gl = document.querySelector('canvas').getContext('webgl2',
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
@@ -81,13 +57,15 @@ async function setupCanvas() {
 
 
 /**
- * Set up event handlers needed for events for user input like clicking on the different radio buttons and moving the
- * mouse. Add the callbacks to be called when these events happen.
+ * Change the animation to the one passed in with the options specified.
  */
 function setupScene(scene, options) {
     changeAnimation(scene, options)
 }
 
+/**
+ * Initialize a blank HTML canvas with a background color and stretched to the screen's width and height.
+ */
 function initCanvas() {
     window.gl = document.querySelector('canvas').getContext('webgl2',
         // optional configuration object: see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext

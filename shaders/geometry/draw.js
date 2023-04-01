@@ -25,20 +25,17 @@ function drawGeometry() {
     gl.drawElements(window.geom.mode, window.geom.count, window.geom.type, 0)
 }
 
+/**
+ * Calculate the camera's position as it moves back and forth around one side of the geometry object.
+ * @param milliseconds
+ */
 function timeStep(milliseconds) {
     let seconds = milliseconds / 1000
     let s2 = Math.cos(seconds/2)-1
 
     let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
     window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
-    // window.m = m4mult(m4rotY(seconds), m4rotX(-Math.PI / 2))
-    // window.v = m4view(
-    //     [0, 0, 3],
-    //     [0, 0, 0],
-    //     [0, 1, 0]
-    // )
     window.eyedir =  new Float32Array(m4normalized_(eye))
-    gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), new Float32Array(m4normalized_(eye)))
 
     drawGeometry()
     if (window.currentAnimation === animationMap.geometry.currentAnimation) {
@@ -46,6 +43,11 @@ function timeStep(milliseconds) {
     }
 }
 
+/**
+ * Calculate the normals of the vertexes and add them to the data object so we can use them in the shaders for lighting
+ * calculations.
+ * @param data
+ */
 function addNormals(data) {
     let normals = new Array(data.attributes.position.length)
     for(let i=0; i<normals.length; i+=1) normals[i] = new Array(3).fill(0)
