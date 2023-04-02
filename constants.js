@@ -38,10 +38,10 @@ const controlOptions = {
             "lighting": {
                 "type": "radio",
                 "options": {
-                    "specular": "Shiny: Specular lighting with moving camera.",
-                    "lampart": "Lambert's-law diffuse lighting with moving camera.",
-                    "ramp": "Height-based color ramp with moving camera.",
-                    "cliff": "Rocky cliffs with moving camera.",
+                    "specular": "Optional: Shiny: Specular lighting with moving camera.",
+                    "lampart": "Required: Lambert's-law diffuse lighting with moving camera.",
+                    "ramp": "Optional: Height-based color ramp with moving camera.",
+                    "cliff": "Optional: Rocky cliffs with moving camera.",
                 },
             },
         }
