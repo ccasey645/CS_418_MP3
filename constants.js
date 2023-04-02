@@ -14,7 +14,7 @@ const controlOptions = {
                 "type": "radio",
                 "options": {
                     "specular": "Specular Lighting With Two Light Sources and moving camera.",
-                    "lampart": "Lambert’s-law diffuse lighting with two light sources and moving camera.",
+                    "lampart": "Lambert's-law diffuse lighting with two light sources and moving camera.",
                 },
             },
         }
@@ -39,7 +39,7 @@ const controlOptions = {
                 "type": "radio",
                 "options": {
                     "specular": "Shiny: Specular lighting with moving camera.",
-                    "lampart": "Lambert’s-law diffuse lighting with moving camera.",
+                    "lampart": "Lambert's-law diffuse lighting with moving camera.",
                     "ramp": "Height-based color ramp with moving camera.",
                     "cliff": "Rocky cliffs with moving camera.",
                 },
