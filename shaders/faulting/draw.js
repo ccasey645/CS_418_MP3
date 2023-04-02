@@ -31,8 +31,8 @@ function faultingTimeStep(milliseconds) {
     let seconds = milliseconds / 1000
     let s2 = Math.cos(seconds/2)-1
 
-    let eye = [3*Math.cos(s2),3*Math.sin(s2),1]
-    window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1], [0,0,0], [0,0,1])
+    let eye = [3*Math.cos(s2),3*Math.sin(s2),1.5]
+    window.v = m4view([3*Math.cos(s2),3*Math.sin(s2),1.5], [0,0,0], [0,0,1])
     window.eyedir =  new Float32Array(m4normalized_(eye))
     gl.uniform3fv(gl.getUniformLocation(window.program, 'eyedir'), window.eyedir)
 
@@ -99,15 +99,36 @@ function doVerticalSeperation(vertexes) {
         }
     }
 
-    window.maxTerrainHeight = zMax
-    window.minTerrainHeight = zMin
-
     h = (xMax - xMin) * separationConstant
     if (h !== 0) {
         for (let i = 0; i < vertexes.length; i++) {
             vertexes[i][2] = ((vertexes[i][2] - zMin) / (zMax - zMin)) * h - (h / 2)
         }
     }
+
+    if (vertexes.length > 0) {
+        xMin = vertexes[0][0]
+        zMin = vertexes[0][2]
+        xMax = vertexes[0][0]
+        zMax = vertexes[0][2]
+    }
+
+    for (let i = 0; i < vertexes.length; i++) {
+        if (vertexes[i][0] < xMin) {
+            xMin = vertexes[i][0]
+        }
+        if (vertexes[i][0] > xMax) {
+            xMax = vertexes[i][0]
+        }
+        if (vertexes[i][2] > zMax) {
+            zMax = vertexes[i][2]
+        }
+        if (vertexes[i][2] < zMin) {
+            zMin = vertexes[i][2]
+        }
+    }
+    window.maxTerrainHeight = zMax
+    window.minTerrainHeight = zMin
 }
 
 /**
@@ -156,7 +177,7 @@ function determinePointIsLeftOfFault(b, p, n) {
  * @param displacement
  */
 function createFault(vertexes, displacement) {
-    const {x, y} = createRandomPoint(5, 5, window.gridSize - 5, window.gridSize - 5)
+    const {x, y} = createRandomPoint(1, 1, window.gridSize - 1, window.gridSize - 1)
     const n = getRandomNormal()
     const p = [x, y, 0]
     for (let i = 0; i < vertexes.length; i++) {
@@ -175,7 +196,7 @@ function createFault(vertexes, displacement) {
  * @param data
  */
 function generateTerrain(slices, data) {
-    let displacement = 0.3
+    let displacement = window.gridSize / 2
     const displacementNormalization = displacement / (slices * 2)
     for (let i = 0; i < slices; i++) {
         createFault(data.attributes.position, displacement)
